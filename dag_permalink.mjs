@@ -1,0 +1,185 @@
+import { MAX_NEIGHBORHOOD_DEPTH } from "./causal_neighborhood.mjs?v=62319aadff703f44";
+
+export const PERMALINK_VERSION = "1";
+export const TASKS = ["identify", "causes", "consequences"];
+export const WORKFLOW_MODES = ["setup", "dag", "group_review"];
+// Each explore view's URL keys: focus group, depth and minimum papers per link.
+const exploreKeys = { causes: ["causes_of", "causes_depth", "causes_min_papers"],
+  consequences: ["effects_of", "effects_depth", "effects_min_papers"] };
+// Variables left off each explore view's map, one parameter per variable.
+const exploreExcludedKeys = { causes: "causes_excluded", consequences: "effects_excluded" };
+// Variables left off Identify's map, kept for the cause and outcome they were unticked under.
+const IDENTIFY_EXCLUDED_KEY = "id_excluded";
+const identifyExclusionKey = (iv, dv) => `${iv || ""}\u0000${dv || ""}`;
+
+const booleanFields = {
+  conf: "showConfoundersOnly", coll: "showCollidersOnly", excl: "showExclusionViolations", exog: "showExogeneity",
+  sparse: "excludeSparseEdges",
+  bottle: "excludeBottleneckedConfounders",
+  paths: "hideIrrelevantConfounderLinks",
+  excl_links: "showAllExclusionLinks",
+};
+
+export function permalinkInput(location = globalThis.location) {
+  const params = new URL(location.href).searchParams;
+  if (params.get("p") !== PERMALINK_VERSION) return null;
+  return params;
+}
+
+export function schemaMatchesProject(schema, project) {
+  if (!schema || !project || schema.grouping_set_id !== project.active_grouping_set_id) return false;
+  if (Object.keys(project.link_decisions || {}).length) return false;
+  if (JSON.stringify(project.finding_decisions || {}) !== JSON.stringify(schema.finding_decisions || {})) return false;
+  const source = new Map((schema.groups || []).map(group => [group.group_id, group]));
+  if ((project.groups || []).length !== source.size) return false;
+  return project.groups.every(group => {
+    const original = source.get(group.source_group_id || group.group_id);
+    if (!original || (group.label || "") !== (original.label || "") || (group.notes || "") !== (original.notes || "")) return false;
+    return JSON.stringify([...(group.variable_ids || [])].sort()) === JSON.stringify([...(original.variable_ids || [])].sort());
+  });
+}
+
+export function buildPermalink({ location, schemaUrl, dataVersion, state,
+  localSchemaId = "", publishedSchemaId = "" }) {
+  const url = new URL(location.href);
+  url.search = "";
+  const values = {
+    p: PERMALINK_VERSION, schema_url: schemaUrl, data_version: dataVersion,
+    iv: state.project.iv_group_id, dv: state.project.dv_group_id,
+    instrument: state.project.instrument_group_id || "",
+    mode: state.workflowMode, vlayout: state.variableLayoutSource,
+    path: String(state.confounderMaxPathLength),
+    min_papers: String(state.minimumEdgePapers ?? 2),
+    exclusion_path: String(state.exclusionMaxPathLength ?? 2),
+    selected_group: state.activeGroupId || "", selected_variable: state.selectedVariableId || "",
+    selected_edge: state.selectedEdgeId || "", sort: state.groupListSort || "",
+    fs: state.fullscreenPanel || "",
+    dz: String(state.dagViewport?.scale ?? ""), dx: String(state.dagViewport?.position?.x ?? ""),
+    dy: String(state.dagViewport?.position?.y ?? ""),
+  };
+  for (const [parameter, field] of Object.entries(booleanFields)) values[parameter] = state[field] ? "1" : "0";
+  // "home" marks the start page, so a reload there does not open a task.
+  values.task = state.task || "home";
+  // A page that named its schema source keeps naming it in the links it makes.
+  if (state.dagDisplay === "table") values.dag_view = "table";
+  if (state.customVariablesOpen) values.workspace = "schema";
+  for (const [view, [focusKey, depthKey, papersKey]] of Object.entries(exploreKeys)) {
+    const explore = state.explore?.[view];
+    if (!explore?.focusId) continue;
+    values[focusKey] = explore.focusId;
+    values[depthKey] = String(explore.depth);
+    values[papersKey] = String(explore.minPapers);
+  }
+  for (const [key, value] of Object.entries(values)) if (value !== "") url.searchParams.set(key, value);
+  for (const [view, key] of Object.entries(exploreExcludedKeys)) {
+    const explore = state.explore?.[view];
+    if (explore?.focusId) for (const id of explore.excluded || []) url.searchParams.append(key, id);
+  }
+  const identifyExclusion = state.identifyExclusion;
+  if (identifyExclusion?.key === identifyExclusionKey(state.project.iv_group_id, state.project.dv_group_id)) {
+    for (const id of identifyExclusion.ids || []) url.searchParams.append(IDENTIFY_EXCLUDED_KEY, id);
+  }
+  if (publishedSchemaId) url.searchParams.set("schema", publishedSchemaId);
+  if (localSchemaId) url.searchParams.set("local_schema", localSchemaId);
+  return url.href;
+}
+
+/** Restore the task and explore views; links made before tasks existed open identification. */
+export function applyTaskPermalink(params, state, resolveGroup) {
+  const task = params.get("task");
+  state.dagDisplay = params.get("dag_view") === "table" ? "table" : "graph";
+  state.task = !params.has("task") ? "identify" : TASKS.includes(task) ? task : null;
+  for (const [view, [focusKey, depthKey, papersKey]] of Object.entries(exploreKeys)) {
+    const depth = Math.trunc(Number(params.get(depthKey)));
+    const papers = Math.trunc(Number(params.get(papersKey)));
+    state.explore[view] = {
+      focusId: resolveGroup(params.get(focusKey)) || null,
+      depth: depth >= 1 && depth <= MAX_NEIGHBORHOOD_DEPTH ? depth : 1,
+      minPapers: Number.isSafeInteger(papers) && papers >= 1 ? papers : 2,
+    };
+    const excluded = [...new Set(params.getAll(exploreExcludedKeys[view]).map(resolveGroup).filter(Boolean))];
+    if (state.explore[view].focusId && excluded.length) state.explore[view].excluded = excluded;
+  }
+}
+
+export function applyPermalink(params, state) {
+  if (!params) return false;
+  const groups = state.project.groups || [];
+  const resolveGroup = id => groups.find(group => group.group_id === id || group.source_group_id === id)?.group_id;
+  state.explore ||= { causes: {}, consequences: {} };
+  applyTaskPermalink(params, state, resolveGroup);
+  const iv = resolveGroup(params.get("iv"));
+  const dv = resolveGroup(params.get("dv"));
+  const partialSetup = params.get("mode") === "setup" && (!iv || !dv);
+  // Explore views are keyed by their focus variable, not a cause/outcome pair.
+  const exploring = Boolean(state.task !== "identify" && state.task && state.explore?.[state.task]?.focusId);
+  if ((!iv || !dv || iv === dv) && !partialSetup && !exploring) {
+    const task = params.get("task");
+    if (task === "causes" || task === "consequences") throw new Error("This link's focus variable is not in the referenced schema.");
+    if (params.has("task") && !TASKS.includes(task)) throw new Error("This link names a task that Echo does not recognise.");
+    throw new Error("Permalink cause or outcome is absent from the referenced schema.");
+  }
+  state.project.iv_group_id = iv || "";
+  state.project.dv_group_id = dv || "";
+  const identifyExcluded = [...new Set(params.getAll(IDENTIFY_EXCLUDED_KEY).map(resolveGroup).filter(Boolean))];
+  state.identifyExclusion = iv && dv && identifyExcluded.length
+    ? { key: identifyExclusionKey(iv, dv), ids: identifyExcluded } : null;
+  const instrument = resolveGroup(params.get("instrument"));
+  state.project.instrument_group_id = instrument && instrument !== iv && instrument !== dv ? instrument : null;
+  for (const group of groups) {
+    if (group.group_id === iv) group.type = "iv";
+    else if (group.group_id === dv) group.type = "dv";
+    else if (group.type === "iv" || group.type === "dv") group.type = "candidate";
+  }
+  const ivGroup = groups.find(group => group.group_id === iv);
+  const dvGroup = groups.find(group => group.group_id === dv);
+  state.seeds = {
+    ...(state.seeds || {}),
+    iv: new Set(ivGroup?.variable_ids || []),
+    dv: new Set(dvGroup?.variable_ids || []),
+  };
+  if (partialSetup) state.phase = iv ? "select_dv" : "select_iv";
+  // Only modes the app has; anything else would be stored, written back into every later link, and never exit.
+  state.workflowMode = WORKFLOW_MODES.includes(params.get("mode")) ? params.get("mode") : "dag";
+  state.dagLayoutMode = "auto";
+  state.variableLayoutSource = params.get("vlayout") || state.variableLayoutSource;
+  state.selectedUoa = null;
+  state.uoaFilterEnabled = false;
+  state.excludeSparseEdges = params.get("sparse") === "1";
+  const minPapers = Math.trunc(Number(params.get("min_papers")));
+  state.minimumEdgePapers = Number.isSafeInteger(minPapers) && minPapers >= 1 ? minPapers : 2;
+  state.confounderMaxPathLength = Math.max(1, Math.min(99, Number(params.get("path")) || 1));
+  state.exclusionMaxPathLength = Math.max(2, Math.min(99,
+    Number(params.get("exclusion_path")) || (state.project.instrument_group_id ? Number(params.get("path")) : 0) || 2));
+  for (const [parameter, field] of Object.entries(booleanFields)) if (params.has(parameter)) state[field] = params.get(parameter) === "1";
+  if (!params.has("excl_links")) state.showAllExclusionLinks = false;
+  if (!params.has("conf")) state.showConfoundersOnly = !params.has("coll");
+  if (!params.has("coll")) state.showCollidersOnly = false;
+  state.showExogeneity = Boolean(state.project.instrument_group_id && params.get("exog") === "1");
+  state.showExclusionViolations = Boolean(state.project.instrument_group_id && !state.showExogeneity);
+  if (state.showExclusionViolations || state.showExogeneity) {
+    state.showConfoundersOnly = false;
+    state.showCollidersOnly = false;
+  }
+  if (state.showConfoundersOnly && state.showCollidersOnly) {
+    state.showCollidersOnly = false;
+  }
+  // There is no unfiltered view: a link that asks for no filter opens the confounders view.
+  if (!state.showConfoundersOnly && !state.showCollidersOnly && !state.showExclusionViolations && !state.showExogeneity) {
+    state.showConfoundersOnly = true;
+  }
+  state.customVariablesOpen = params.get("workspace") === "schema";
+  state.activeGroupId = resolveGroup(params.get("selected_group")) || null;
+  state.selectedVariableId = params.get("selected_variable") || null;
+  state.selectedEdgeId = params.get("selected_edge") || null;
+  state.groupListSort = params.get("sort") === "alpha" ? "alpha" : "relevance";
+  state.fullscreenPanel = params.get("fs") === "dag" ? "dag" : null;
+  const numeric = key => Number(params.get(key));
+  if (["dz", "dx", "dy"].every(key => params.has(key) && params.get(key) !== "" && Number.isFinite(numeric(key)))
+    && numeric("dz") > 0) {
+    state.permalinkDagViewport = { scale: numeric("dz"), position: { x: numeric("dx"), y: numeric("dy") } };
+  }
+  return true;
+}
+
+export const CUSTOM_SCHEMA_INSTRUCTIONS = `This view cannot be shared yet because its schema differs from the hosted schema.\n\n1. Click “Export schema”.\n2. Convert the exported JSON with: convert_groupings_schema.py to-folder exported.json schema/\n3. Commit the entire schema/ folder to a public GitHub repository.\n4. Use the raw.githubusercontent.com URL for that folder, ending with “/”.\n5. Reopen this viewer with ?schema_url=<encoded raw folder URL>.\n6. Confirm the hosted schema loads, recreate the view, then click “Copy permalink” again.\n\nThe host must permit browser CORS requests and serve every file listed by manifest.json.`;

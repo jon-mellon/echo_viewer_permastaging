@@ -1,0 +1,143 @@
+import { canonicalFolderHash, stableJson, writeGroupingSchemaFolder } from "./grouping_schema_writer.mjs?v=62319aadff703f44";
+import { publicSchemaBaseUrl, lookupPublishedSchema } from "./publication_access.mjs?v=62319aadff703f44";
+import { canonicalPublishedReference, isPublishedFileUrl, publishedReferenceUrl } from "./schema_source.mjs?v=62319aadff703f44";
+import { cloudflareApiConfigured, CLOUDFLARE_API_URL } from "./cloudflare_config.mjs?v=62319aadff703f44";
+import { ensureOwner, publishFiles } from "./cloudflare_api.mjs?v=62319aadff703f44";
+import { createCompiledArtifacts, evidenceSnapshotForSchema, fullCompileDag,
+  COMPILED_DAG_PATH, COMPILED_MANIFEST_PATH, DAG_COMPILER_VERSION } from "./compiled_dag.mjs?v=62319aadff703f44";
+import { publicCompiledDag, publicLinkDecisions, publicFindingDecisions, publicSchemaProjection } from "./public_schema_projection.mjs?v=62319aadff703f44";
+
+export const CANONICAL_BASELINE_ID = "a0118906-2366-4cc8-8809-bafdf3860c23";
+export const CANONICAL_BASELINE_HASH = "0afd5f28c1b5456c47cfba84467bea1d62c6dc923a5851281a98d461f60066b4";
+
+export function formatPublicationError(error) {
+  if (!error) return "Unknown publication error";
+  const parts = [error.message || String(error)];
+  for (const key of ["code", "details", "hint", "status", "statusCode"]) {
+    if (error[key] !== undefined && error[key] !== null && error[key] !== "") parts.push(`${key}: ${error[key]}`);
+  }
+  return parts.join(" | ");
+}
+
+export async function canonicalizeWorkingSchema(schema, cryptoApi = globalThis.crypto, { views = true } = {}) {
+  const files = await writeGroupingSchemaFolder(publicSchemaProjection(schema), cryptoApi, { views });
+  return { files, contentHash: await canonicalFolderHash(files, cryptoApi) };
+}
+
+/** Both content hashes from one write: with the derived view files, and without them as older publications were made. */
+export async function workingSchemaHashes(schema, cryptoApi = globalThis.crypto) {
+  const files = await writeGroupingSchemaFolder(publicSchemaProjection(schema), cryptoApi);
+  const manifest = JSON.parse(new TextDecoder().decode(files.get("manifest.json")));
+  const legacy = new Map(files);
+  for (const key of ["variable_schema_file", "study_decisions_file"]) {
+    legacy.delete(manifest[key]);
+    delete manifest[key];
+  }
+  legacy.set("manifest.json", new TextEncoder().encode(stableJson(manifest)));
+  return [await canonicalFolderHash(files, cryptoApi), await canonicalFolderHash(legacy, cryptoApi)];
+}
+
+/** The browser and local agent use this exact publication path. */
+export async function publishWorkingSchema({
+  schema,
+  previousPublication,
+  compiledDag = null,
+  compileInput = null,
+  cryptoApi = globalThis.crypto,
+  onProgress = () => {},
+  fetchImpl = globalThis.fetch,
+  // The Cloudflare service settings can be supplied for tests or local agents.
+  cloudflare = {},
+  freshAttempt = false,
+}) {
+  if (!cloudflareApiConfigured(cloudflare.apiUrl ?? CLOUDFLARE_API_URL)) {
+    throw new Error("Cloudflare publishing is not configured.");
+  }
+  const user = await ensureOwner(cloudflare);
+  const publicSchema = publicSchemaProjection(schema);
+  const canonical = await canonicalizeWorkingSchema(publicSchema, cryptoApi);
+
+  // Keep the reservation identity across reloads, but only reuse it if the
+  // complete regenerated upload is byte-for-byte identical.
+  const storage = cloudflare.storage ?? globalThis.localStorage;
+  const pendingKey = `echo-publish-pending:${user.id}:${canonical.contentHash}:${previousPublication?.publication_id || CANONICAL_BASELINE_ID}`;
+  let pending = null;
+  try { if (!freshAttempt) pending = JSON.parse(storage?.getItem(pendingKey) || "null"); } catch { /* storage unavailable */ }
+  const publicationId = pending?.id || cryptoApi.randomUUID();
+  const storagePrefix = `${user.id}/${publicationId}`;
+  const evidenceSnapshot = evidenceSnapshotForSchema(publicSchema);
+  const publicProject = { ...(compileInput?.project || {}),
+    link_decisions: publicLinkDecisions(publicSchema.link_decisions),
+    finding_decisions: publicFindingDecisions(publicSchema.finding_decisions) };
+  const dag = compiledDag
+    ? publicCompiledDag(compiledDag, publicSchema.link_decisions)
+    : fullCompileDag({ schema: publicSchema, ...(compileInput || {}), project: publicProject });
+  const compiled = await createCompiledArtifacts({ publicationId, schemaHash: canonical.contentHash,
+    evidenceSnapshot, dag, cryptoApi });
+  const files = new Map(canonical.files);
+  // Compare exact canonical membership bytes with the parent. References are
+  // flattened to their original immutable object, avoiding chains of manifests.
+  const parentId = previousPublication?.publication_id || CANONICAL_BASELINE_ID;
+  let parentPrefix = previousPublication?.storage_prefix;
+  if (!parentPrefix && /^[0-9a-f-]{36}$/i.test(parentId)) {
+    parentPrefix = (await lookupPublishedSchema(parentId, null, { fetchImpl })).storage_prefix;
+  }
+  if (parentPrefix) {
+    const base = publicSchemaBaseUrl(null, parentPrefix);
+    const response = await fetchImpl(new URL("manifest.json", base));
+    if (!response.ok) throw new Error(`Could not read parent manifest: ${response.status}`);
+    const parent = await response.json();
+    const manifest = JSON.parse(new TextDecoder().decode(files.get("manifest.json")));
+    const references = {};
+    const candidates = Object.entries(manifest.group_membership_files);
+    let next = 0;
+    async function compareMemberships() {
+      while (next < candidates.length) {
+        const [groupId, path] = candidates[next++];
+        const oldPath = parent.group_membership_files?.[groupId];
+        if (!oldPath) continue;
+        const reference = parent.group_membership_references?.[groupId];
+        const url = reference ? publishedReferenceUrl(reference, base) : new URL(oldPath, base);
+        if (!url || !isPublishedFileUrl(url, base)) throw new Error(`Invalid parent membership reference for ${groupId}.`);
+        const oldResponse = await fetchImpl(url);
+        if (!oldResponse.ok) throw new Error(`Could not read parent membership for ${groupId}: ${oldResponse.status}`);
+        const oldBytes = new Uint8Array(await oldResponse.arrayBuffer());
+        const current = files.get(path);
+        if (oldBytes.length === current.length && oldBytes.every((byte, index) => byte === current[index])) {
+          // Store the canonical R2 address, including for legacy parent references.
+          references[groupId] = canonicalPublishedReference(url);
+          files.delete(path);
+        }
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(16, candidates.length) }, compareMemberships));
+    if (Object.keys(references).length) {
+      manifest.group_membership_references = references;
+      files.set("manifest.json", new TextEncoder().encode(stableJson(manifest)));
+    }
+  }
+  files.set(COMPILED_DAG_PATH, compiled.dagBytes);
+  files.set(COMPILED_MANIFEST_PATH, compiled.manifestBytes);
+  const entries = [...files.entries()].sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0);
+  const compiledManifestHash = await (async () => {
+    const digest = await cryptoApi.subtle.digest("SHA-256", compiled.manifestBytes);
+    return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+  })();
+  const parentSchemaId = previousPublication?.publication_id || CANONICAL_BASELINE_ID;
+  const fingerprint = await canonicalFolderHash(new Map(entries), cryptoApi);
+  if (pending && pending.fingerprint !== fingerprint) {
+    try { storage?.removeItem(pendingKey); } catch { /* storage unavailable */ }
+    return publishWorkingSchema({ schema, previousPublication, compiledDag, compileInput, cryptoApi, onProgress, fetchImpl, cloudflare, freshAttempt: true });
+  }
+  try { storage?.setItem(pendingKey, JSON.stringify({ id: publicationId, fingerprint })); } catch { /* retry is limited to this attempt */ }
+  const saved = await publishFiles({
+    owner: user, publicationId, contentHash: canonical.contentHash, compilerVersion: compiled.manifest.compiler_version,
+    row: { title: schema.label || "Published variable schema", description: schema.description || null,
+      evidence_snapshot: evidenceSnapshot, parent_schema_id: parentSchemaId, compiled_manifest_path: COMPILED_MANIFEST_PATH,
+      compiled_manifest_hash: compiledManifestHash },
+    files: new Map(entries), onProgress, resume: Boolean(pending), apiUrl: cloudflare.apiUrl ?? CLOUDFLARE_API_URL,
+    ...(cloudflare.fetchImpl ? { fetchImpl: cloudflare.fetchImpl } : {}),
+  });
+  try { storage?.removeItem(pendingKey); } catch { /* storage unavailable */ }
+  return { ...saved.row, publicationId: saved.row.id, contentHash: saved.row.content_hash, fileCount: entries.length, reused: saved.reused };
+}

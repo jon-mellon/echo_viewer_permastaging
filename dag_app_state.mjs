@@ -1,0 +1,70 @@
+// @ts-check
+
+/** @typedef {import("./app_contracts.mjs?v=62319aadff703f44").DagAppState} DagAppState */
+
+// There is no unfiltered diagram: when no diagnostic view is on, the confounders view is. Every rebuild path normalizes
+// through this, so the heading, toolbar and graph always describe the same view.
+/** @param {Record<string, any>} state */
+export function ensureDiagnosticFilter(state) {
+  if (state.showConfoundersOnly || state.showCollidersOnly || state.showExclusionViolations || state.showExogeneity) return false;
+  state.showConfoundersOnly = true;
+  return true;
+}
+
+// The causes and consequences views each keep their own focus and settings, so
+// switching between the three tasks never loses work.
+export function createExploreState() {
+  return {
+    causes: { focusId: null, depth: 1, minPapers: 2 },
+    consequences: { focusId: null, depth: 1, minPapers: 2 },
+  };
+}
+
+export function createDagAppState(interfaceMode = "classic") {
+  return /** @type {DagAppState} */ ({
+    interfaceMode,
+    task: null, explore: createExploreState(), dagDisplay: "graph",
+    data: null,
+    variables: [], variableById: new Map(), clusterOf: new Map(), clusterMembers: new Map(),
+    rawLinks: [], rawLinksById: new Map(), edgeSupportById: new Map(), linkLookup: new Map(), similarityEdgeMap: new Map(),
+    compiledDag: null, compiledDagValid: false,
+    compiledDagUpdatePromise: null,
+    publishedSchemaHydrating: false, publishedSchemaHydrated: true, publishedSchemaLoadFailed: false,
+    publishedMembershipReadyGroups: new Set(),
+    variableSearchStatus: "idle", variableSearchError: null,
+    project: null,
+    seeds: { iv: new Set(), dv: new Set(), instrument: new Set() },
+    searchMatches: { iv: [], dv: [], instrument: [] },
+    activeGroupId: null, focusedGroupId: null, selectedVariableId: null,
+    selectedEvidenceGroupId: null,
+    comparisonVariableIds: [], hoveredVariableId: null, selectedEdgeId: null,
+    candidateQueue: [], visibleLinks: [], componentGroupIds: new Set(),
+    selectedUoa: null, uoaFilterEnabled: false,
+    phase: "select_dv", workflowMode: "setup", changingAnchorSide: null,
+    anchorSearchMode: { iv: "existing", dv: "existing", instrument: "existing" }, groupListSort: "relevance",
+    undoHistory: [], undoPointer: -1, actionLog: [], showActionHistory: false,
+    definitionDraft: null,
+    variableLayoutSource: "",
+    projectStorageVariableCount: null, dagLayoutMode: "auto",
+    showConfoundersOnly: true, showCollidersOnly: false,
+    showExclusionViolations: false,
+    showExogeneity: false,
+    exogeneityGroupIds: new Set(), exogeneityPathGroupIds: new Set(),
+    exogeneityPathsByGroup: new Map(), exogeneityLinkPairKeys: new Set(),
+    bottleneckedExogeneityIds: new Set(),
+    exclusionViolationIds: new Set(), exclusionPathIds: new Set(),
+    exclusionPathsByGroup: new Map(), exclusionLinkPairKeys: new Set(),
+    excludeSparseEdges: false, minimumEdgePapers: 2,
+    confounderMaxPathLength: 1, exclusionMaxPathLength: 2, excludeBottleneckedConfounders: true,
+    hideIrrelevantConfounderLinks: true,
+    showAllExclusionLinks: false,
+    confounderGroupIds: new Set(), confounderPathGroupIds: new Set(),
+    confounderPathsByGroup: new Map(), confounderLinkPairKeys: new Set(),
+    bottleneckedConfounderIds: new Set(),
+    colliderGroupIds: new Set(), colliderPathGroupIds: new Set(),
+    colliderPathsByGroup: new Map(), colliderLinkPairKeys: new Set(),
+    bottleneckedColliderIds: new Set(),
+    fullscreenPanel: null, selectedVariableIds: new Set(),
+    visibleCache: { variables: null, clusterReps: null },
+  });
+}
