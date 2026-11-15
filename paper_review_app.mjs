@@ -1,12 +1,12 @@
-import { h } from "./dom_builder.mjs?v=62319aadff703f44";
-import { paperStore } from "./paper_store.mjs?v=62319aadff703f44";
-import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=62319aadff703f44";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=62319aadff703f44";
-import { openRouterJson } from "./definition_jev_core.mjs?v=62319aadff703f44";
-import { PaperModel, validateShape } from "./paper_model.mjs?v=62319aadff703f44";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=62319aadff703f44";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=62319aadff703f44";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=62319aadff703f44";
+import { h } from "./dom_builder.mjs?v=3b5cd2ea8cf013b7";
+import { paperStore } from "./paper_store.mjs?v=3b5cd2ea8cf013b7";
+import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=3b5cd2ea8cf013b7";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=3b5cd2ea8cf013b7";
+import { openRouterJson } from "./definition_jev_core.mjs?v=3b5cd2ea8cf013b7";
+import { PaperModel, validateShape } from "./paper_model.mjs?v=3b5cd2ea8cf013b7";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=3b5cd2ea8cf013b7";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=3b5cd2ea8cf013b7";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=3b5cd2ea8cf013b7";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;

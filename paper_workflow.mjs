@@ -1,9 +1,9 @@
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=62319aadff703f44";
-import { validateClaims, validateQualification } from "./paper_capture.mjs?v=62319aadff703f44";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=62319aadff703f44";
-import { createEchoTools } from "./echo_tools.mjs?v=62319aadff703f44";
-import { CONFOUNDER_STATUSES } from "./confounder_status.mjs?v=62319aadff703f44";
-import { validateGroupingSchema } from "./data_validation.mjs?v=62319aadff703f44";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=3b5cd2ea8cf013b7";
+import { validateClaims, validateQualification } from "./paper_capture.mjs?v=3b5cd2ea8cf013b7";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=3b5cd2ea8cf013b7";
+import { createEchoTools } from "./echo_tools.mjs?v=3b5cd2ea8cf013b7";
+import { CONFOUNDER_STATUSES } from "./confounder_status.mjs?v=3b5cd2ea8cf013b7";
+import { validateGroupingSchema } from "./data_validation.mjs?v=3b5cd2ea8cf013b7";
 
 export const claimSchema = object({ claims: array(object({ id: string, text: string, sourceSentences: array(string) })) });
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,

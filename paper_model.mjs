@@ -1,6 +1,6 @@
-import { openRouterJson } from "./definition_jev_core.mjs?v=62319aadff703f44";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=62319aadff703f44";
-import { digest } from "./paper_review_contract.mjs?v=62319aadff703f44";
+import { openRouterJson } from "./definition_jev_core.mjs?v=3b5cd2ea8cf013b7";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=3b5cd2ea8cf013b7";
+import { digest } from "./paper_review_contract.mjs?v=3b5cd2ea8cf013b7";
 
 export const object = properties => ({ type: "object", properties, required: Object.keys(properties), additionalProperties: false });
 export const string = { type: "string" }, boolean = { type: "boolean" };
