@@ -1,9 +1,9 @@
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=3b5cd2ea8cf013b7";
-import { validateClaims, validateQualification } from "./paper_capture.mjs?v=3b5cd2ea8cf013b7";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=3b5cd2ea8cf013b7";
-import { createEchoTools } from "./echo_tools.mjs?v=3b5cd2ea8cf013b7";
-import { CONFOUNDER_STATUSES } from "./confounder_status.mjs?v=3b5cd2ea8cf013b7";
-import { validateGroupingSchema } from "./data_validation.mjs?v=3b5cd2ea8cf013b7";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=473e73db3655c500";
+import { validateClaims, validateQualification } from "./paper_capture.mjs?v=473e73db3655c500";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=473e73db3655c500";
+import { createEchoTools } from "./echo_tools.mjs?v=473e73db3655c500";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=473e73db3655c500";
+import { validateGroupingSchema } from "./data_validation.mjs?v=473e73db3655c500";
 
 export const claimSchema = object({ claims: array(object({ id: string, text: string, sourceSentences: array(string) })) });
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,
@@ -193,8 +193,8 @@ causes_y_only_via_x must reject EVERY alternate direct or two-link route in the 
     publicationId: session.record.sourcePublication.id, schemaHash: session.record.sourcePublication.content_hash,
     physicalSnapshotId: session.record.snapshotId, evidenceManifestHash: session.record.evidenceManifestHash,
     focalVariableMatches: run.focalVariables, linkReviews: coverage.linkReviews,
-    review, model: run.model, usage: run.calls,
-    limitations: ["AI review requires human inspection; it does not establish identification or quantify bias.",
+    review, statusLabels: CONFOUNDER_STATUSES, reviewNotice: MANUAL_REVIEW_NOTICE, model: run.model, usage: run.calls,
+    limitations: [MANUAL_REVIEW_NOTICE, "AI review does not establish identification or quantify bias.",
       "No previous private finding judgments or private split library were reused.",
       "Missing focal variable occurrences are not manufactured; inspect anchor membership and measurement correspondence.",
       "This version does not separately assess whether a confounder duplicates the exposure or outcome definition.",
