@@ -1,13 +1,14 @@
-import { h } from "./dom_builder.mjs?v=473e73db3655c500";
-import { paperStore } from "./paper_store.mjs?v=473e73db3655c500";
-import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=473e73db3655c500";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=473e73db3655c500";
-import { openRouterJson } from "./definition_jev_core.mjs?v=473e73db3655c500";
-import { PaperModel, validateShape } from "./paper_model.mjs?v=473e73db3655c500";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=473e73db3655c500";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=473e73db3655c500";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=473e73db3655c500";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=473e73db3655c500";
+import { h } from "./dom_builder.mjs?v=b4f436b9e8ea95fa";
+import { paperStore } from "./paper_store.mjs?v=b4f436b9e8ea95fa";
+import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=b4f436b9e8ea95fa";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=b4f436b9e8ea95fa";
+import { openRouterJson } from "./definition_jev_core.mjs?v=b4f436b9e8ea95fa";
+import { PaperModel, validateShape } from "./paper_model.mjs?v=b4f436b9e8ea95fa";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=b4f436b9e8ea95fa";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=b4f436b9e8ea95fa";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=b4f436b9e8ea95fa";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=b4f436b9e8ea95fa";
+import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=b4f436b9e8ea95fa";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;
@@ -45,7 +46,10 @@ function render() {
       h("p", { textContent: run.selectedClaim.text }));
     for (const [id, row] of Object.entries(run.outcome.review.confounders)) {
       const group = (session?.schema || run.session?.schema)?.groups.find(group => group.group_id === id);
-      $("result").append(h("div", { className: "status-row" }, h("strong", { textContent: `${group?.label || id} · ${CONFOUNDER_STATUSES[row.status] || row.status}` }), h("p", { textContent: row.reason })));
+      $("result").append(h("div", { className: "status-row" },
+        h("strong", { textContent: `${group?.label || id} · ${CONFOUNDER_STATUSES[row.status] || row.status}` }),
+        row.status === "unaddressed" ? h("p", { className: "muted", textContent: row.assessmentNotice || unaddressedAssessmentNotice(group?.label) }) : null,
+        h("p", { textContent: row.reason })));
     }
     $("result").append(h("p", { className: "muted", textContent: run.outcome.limitations.join(" ") }));
   }

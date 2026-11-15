@@ -1,9 +1,10 @@
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=473e73db3655c500";
-import { validateClaims, validateQualification } from "./paper_capture.mjs?v=473e73db3655c500";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=473e73db3655c500";
-import { createEchoTools } from "./echo_tools.mjs?v=473e73db3655c500";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=473e73db3655c500";
-import { validateGroupingSchema } from "./data_validation.mjs?v=473e73db3655c500";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=b4f436b9e8ea95fa";
+import { validateClaims, validateQualification } from "./paper_capture.mjs?v=b4f436b9e8ea95fa";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=b4f436b9e8ea95fa";
+import { createEchoTools } from "./echo_tools.mjs?v=b4f436b9e8ea95fa";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=b4f436b9e8ea95fa";
+import { validateGroupingSchema } from "./data_validation.mjs?v=b4f436b9e8ea95fa";
+import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=b4f436b9e8ea95fa";
 
 export const claimSchema = object({ claims: array(object({ id: string, text: string, sourceSentences: array(string) })) });
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,
@@ -137,6 +138,7 @@ causes_y_only_via_x must reject EVERY alternate direct or two-link route in the 
     await session.setConfounderStatus({ groupId, status: assessment.status, text: assessment.reason,
       rejectedPaths: assessment.rejectedPaths.map(row => row.id) });
     review.confounders[groupId] = { status: assessment.status, reason: assessment.reason,
+      ...(assessment.status === "unaddressed" ? { assessmentNotice: unaddressedAssessmentNotice(group.label) } : {}),
       ...(assessment.rejectedPaths.length ? { rejected_paths: rejected } : {}) };
     review.split_assessments[groupId] = { systematically_different: false, reason: assessment.splitReason || assessment.reason };
     await model.save();

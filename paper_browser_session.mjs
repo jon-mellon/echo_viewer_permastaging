@@ -1,16 +1,16 @@
-import { EchoSessionCore } from "./echo_session_core.mjs?v=473e73db3655c500";
-import { DEFAULT_SCHEMA_PUBLICATION_ID, evidenceManifestUrl, evidenceSnapshotIdFromManifestUrl } from "./dag_data_config.mjs?v=473e73db3655c500";
-import { incrementCompiledDag, fullCompileDag } from "./compiled_dag.mjs?v=473e73db3655c500";
-import { loadPublishedSchema } from "./published_schema_loader.mjs?v=473e73db3655c500";
-import { StaticVariableSearchCatalog } from "./variable_search_catalog.mjs?v=473e73db3655c500";
-import { ensureOwner } from "./cloudflare_api.mjs?v=473e73db3655c500";
-import { validateGroupingSchema } from "./data_validation.mjs?v=473e73db3655c500";
-import { publicationPermalink } from "./published_schema_loader.mjs?v=473e73db3655c500";
-import { digest } from "./paper_review_contract.mjs?v=473e73db3655c500";
+import { EchoSessionCore } from "./echo_session_core.mjs?v=b4f436b9e8ea95fa";
+import { DEFAULT_SCHEMA_PUBLICATION_ID, evidenceManifestUrl, evidenceSnapshotIdFromManifestUrl } from "./dag_data_config.mjs?v=b4f436b9e8ea95fa";
+import { incrementCompiledDag, fullCompileDag } from "./compiled_dag.mjs?v=b4f436b9e8ea95fa";
+import { loadPublishedSchema } from "./published_schema_loader.mjs?v=b4f436b9e8ea95fa";
+import { StaticVariableSearchCatalog } from "./variable_search_catalog.mjs?v=b4f436b9e8ea95fa";
+import { ensureOwner } from "./cloudflare_api.mjs?v=b4f436b9e8ea95fa";
+import { validateGroupingSchema } from "./data_validation.mjs?v=b4f436b9e8ea95fa";
+import { publicationPermalink } from "./published_schema_loader.mjs?v=b4f436b9e8ea95fa";
+import { digest } from "./paper_review_contract.mjs?v=b4f436b9e8ea95fa";
 
 export class BrowserEchoSession extends EchoSessionCore {
   static async start({ record = null, save, getKey, request, onStatus = () => {}, publicationId = DEFAULT_SCHEMA_PUBLICATION_ID }) {
-    const { ParquetManifestDagDataSource } = await import("./dag_data_source.mjs?v=473e73db3655c500");
+    const { ParquetManifestDagDataSource } = await import("./dag_data_source.mjs?v=b4f436b9e8ea95fa");
     const loaded = await loadPublishedSchema(record?.sourcePublication.id || publicationId);
     if (record && record.sourcePublication.content_hash !== loaded.publication.content_hash) throw new Error("Pinned schema hash changed.");
     const { schema } = await loaded.loadSchema(); // Includes membership and canonical folder hash verification.

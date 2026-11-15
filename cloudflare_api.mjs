@@ -1,6 +1,6 @@
-import { CLOUDFLARE_API_URL, TURNSTILE_SITE_KEY } from "./cloudflare_config.mjs?v=473e73db3655c500";
-import { solveTurnstile } from "./turnstile.mjs?v=473e73db3655c500";
-import { publishedFileUrl } from "./schema_source.mjs?v=473e73db3655c500";
+import { CLOUDFLARE_API_URL, TURNSTILE_SITE_KEY } from "./cloudflare_config.mjs?v=b4f436b9e8ea95fa";
+import { solveTurnstile } from "./turnstile.mjs?v=b4f436b9e8ea95fa";
+import { publishedFileUrl } from "./schema_source.mjs?v=b4f436b9e8ea95fa";
 
 // Client for the publishing service (docs/publishing-api.md is the contract; the Worker itself lives in harvest_abstracts).
 const OWNER_KEY = "echo-owner-token";
