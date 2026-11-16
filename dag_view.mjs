@@ -1,4 +1,4 @@
-import { isPresentLink } from "./dag_link_aggregation.mjs?v=4d2c68b3bc640cfc";
+import { isPresentLink } from "./dag_link_aggregation.mjs?v=2b59ed2b9cf5ddd2";
 
 import {
   connectedComponentGraph,
@@ -9,7 +9,7 @@ import {
   filterGraphByLinkPairs,
   filterGraphLinks,
   filterGraphNodes,
-} from "./dag_graph.mjs?v=4d2c68b3bc640cfc";
+} from "./dag_graph.mjs?v=2b59ed2b9cf5ddd2";
 
 /** Distinct papers with a present finding among these raw links. */
 export function presentPaperIds(rawLinkIds, edgeSupportById, rawLinksById = edgeSupportById) {

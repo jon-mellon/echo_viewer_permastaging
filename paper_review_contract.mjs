@@ -1,8 +1,8 @@
 // Browser port of harvest_abstracts/analysis/echo_agent_demo/review_contract.mjs.
 // Sampling/filesystem checks are replaced by confirmed capture qualification.
 // Status IDs intentionally follow this checkout's six-status Echo UI contract.
-import { CONFOUNDER_STATUSES as STATUSES } from "./confounder_status.mjs?v=4d2c68b3bc640cfc";
-import { sha256Hex } from "./compiled_dag.mjs?v=4d2c68b3bc640cfc";
+import { CONFOUNDER_STATUSES as STATUSES } from "./confounder_status.mjs?v=2b59ed2b9cf5ddd2";
+import { sha256Hex } from "./compiled_dag.mjs?v=2b59ed2b9cf5ddd2";
 const QUESTIONED_ENDS = new Set(["source", "target", "both"]);
 const EXCLUSION_CODES = new Set(["not_relevant_to_target_population", "concept_miscategorized", "other"]);
 export const CONFOUNDER_STATUSES = new Set(Object.keys(STATUSES));

@@ -1,4 +1,4 @@
-import { CONFOUNDER_STATUSES, EXCLUSION_STATUSES } from "./confounder_status.mjs?v=4d2c68b3bc640cfc";
+import { CONFOUNDER_STATUSES, EXCLUSION_STATUSES } from "./confounder_status.mjs?v=2b59ed2b9cf5ddd2";
 const CHECK_TOOL_NOTE = "Only-via route checks are enabled for browser reviews.";
 const obj = (properties, required = []) => ({ type: "object", properties, required, additionalProperties: false });
 const str = { type: "string" }, bool = { type: "boolean" }, num = { type: "number" };

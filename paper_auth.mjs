@@ -1,5 +1,5 @@
-import { createOpenRouterAuthorization, exchangeOpenRouterCode } from "./openrouter_connection.mjs?v=4d2c68b3bc640cfc";
-import { paperReviewAllowed } from "./paper_review_access.mjs?v=4d2c68b3bc640cfc";
+import { createOpenRouterAuthorization, exchangeOpenRouterCode } from "./openrouter_connection.mjs?v=2b59ed2b9cf5ddd2";
+import { paperReviewAllowed } from "./paper_review_access.mjs?v=2b59ed2b9cf5ddd2";
 const status = document.getElementById("status");
 const storageKey = "echo-paper-pkce-v1";
 async function connect() {
@@ -21,7 +21,7 @@ async function connect() {
   sessionStorage.removeItem(storageKey);
   if (!pending || state !== pending.state || Date.now() - pending.createdAt > 15 * 60 * 1000) throw new Error("Authorization could not be verified. Connect again.");
   const key = await exchangeOpenRouterCode(code, pending.verifier);
-  // Same Echo origin and exact opener; the key never crosses into the extension wrapper.
+  // Same Echo origin and exact opener. The review page may remember the capped key through its authenticated extension bridge.
   window.opener.postMessage({ type: "echo-paper-connected-v1", nonce: pending.nonce, key }, location.origin);
   status.textContent = "Connected. You can close this window.";
   window.close();
