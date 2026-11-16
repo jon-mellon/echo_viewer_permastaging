@@ -1,11 +1,11 @@
-import { extractPipelineClaims } from "./paper_pipeline.mjs?v=2b59ed2b9cf5ddd2";
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=2b59ed2b9cf5ddd2";
-import { validateQualification } from "./paper_capture.mjs?v=2b59ed2b9cf5ddd2";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=2b59ed2b9cf5ddd2";
-import { createEchoTools } from "./echo_tools.mjs?v=2b59ed2b9cf5ddd2";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=2b59ed2b9cf5ddd2";
-import { validateGroupingSchema } from "./data_validation.mjs?v=2b59ed2b9cf5ddd2";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=2b59ed2b9cf5ddd2";
+import { extractPipelineClaims } from "./paper_pipeline.mjs?v=7d2a7a7bfef3ce73";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=7d2a7a7bfef3ce73";
+import { validateQualification } from "./paper_capture.mjs?v=7d2a7a7bfef3ce73";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=7d2a7a7bfef3ce73";
+import { createEchoTools } from "./echo_tools.mjs?v=7d2a7a7bfef3ce73";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=7d2a7a7bfef3ce73";
+import { validateGroupingSchema } from "./data_validation.mjs?v=7d2a7a7bfef3ce73";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=7d2a7a7bfef3ce73";
 
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,
   x: string, y: string, xUnit: string, yUnit: string, population: string, design: string,
