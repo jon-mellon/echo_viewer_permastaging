@@ -1,12 +1,12 @@
-import { EchoSessionCore } from "./echo_session_core.mjs?v=0ec7d6094fafd6eb";
-import { DEFAULT_SCHEMA_PUBLICATION_ID, evidenceManifestUrl, evidenceSnapshotIdFromManifestUrl } from "./dag_data_config.mjs?v=0ec7d6094fafd6eb";
-import { incrementCompiledDag, fullCompileDag } from "./compiled_dag.mjs?v=0ec7d6094fafd6eb";
-import { loadPublishedSchema } from "./published_schema_loader.mjs?v=0ec7d6094fafd6eb";
-import { StaticVariableSearchCatalog } from "./variable_search_catalog.mjs?v=0ec7d6094fafd6eb";
-import { ensureOwner } from "./cloudflare_api.mjs?v=0ec7d6094fafd6eb";
-import { validateGroupingSchema } from "./data_validation.mjs?v=0ec7d6094fafd6eb";
-import { publicationPermalink } from "./published_schema_loader.mjs?v=0ec7d6094fafd6eb";
-import { digest } from "./paper_review_contract.mjs?v=0ec7d6094fafd6eb";
+import { EchoSessionCore } from "./echo_session_core.mjs?v=926dcddfc5a2f044";
+import { DEFAULT_SCHEMA_PUBLICATION_ID, evidenceManifestUrl, evidenceSnapshotIdFromManifestUrl } from "./dag_data_config.mjs?v=926dcddfc5a2f044";
+import { incrementCompiledDag, fullCompileDag } from "./compiled_dag.mjs?v=926dcddfc5a2f044";
+import { loadPublishedSchema } from "./published_schema_loader.mjs?v=926dcddfc5a2f044";
+import { StaticVariableSearchCatalog } from "./variable_search_catalog.mjs?v=926dcddfc5a2f044";
+import { ensureOwner } from "./cloudflare_api.mjs?v=926dcddfc5a2f044";
+import { validateGroupingSchema } from "./data_validation.mjs?v=926dcddfc5a2f044";
+import { publicationPermalink } from "./published_schema_loader.mjs?v=926dcddfc5a2f044";
+import { digest } from "./paper_review_contract.mjs?v=926dcddfc5a2f044";
 
 export class BrowserEchoSession extends EchoSessionCore {
   async jevEstimate(args) {
@@ -15,7 +15,7 @@ export class BrowserEchoSession extends EchoSessionCore {
       ? { ...estimate, model: this.runtime.classifierModel, estimateNote: "Approximate token estimate; split classification uses the pinned pipeline model." } : estimate;
   }
   static async start({ record = null, save, getKey, request, onStatus = () => {}, publicationId = DEFAULT_SCHEMA_PUBLICATION_ID }) {
-    const { ParquetManifestDagDataSource } = await import("./dag_data_source.mjs?v=0ec7d6094fafd6eb");
+    const { ParquetManifestDagDataSource } = await import("./dag_data_source.mjs?v=926dcddfc5a2f044");
     const loaded = await loadPublishedSchema(record?.sourcePublication.id || publicationId);
     if (record && record.sourcePublication.content_hash !== loaded.publication.content_hash) throw new Error("Pinned schema hash changed.");
     const { schema } = await loaded.loadSchema(); // Includes membership and canonical folder hash verification.
