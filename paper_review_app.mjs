@@ -1,15 +1,15 @@
-import { REVIEW_STAGES, recordProgress, progressSnapshot, elapsedLabel } from "./paper_progress.mjs?v=ef3404105d9f1c14";
-import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=ef3404105d9f1c14";
-import { h } from "./dom_builder.mjs?v=ef3404105d9f1c14";
-import { paperStore } from "./paper_store.mjs?v=ef3404105d9f1c14";
-import { validateCapture, confirmedCapture, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=ef3404105d9f1c14";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=ef3404105d9f1c14";
-import { PaperModel } from "./paper_model.mjs?v=ef3404105d9f1c14";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=ef3404105d9f1c14";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=ef3404105d9f1c14";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=ef3404105d9f1c14";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=ef3404105d9f1c14";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=ef3404105d9f1c14";
+import { REVIEW_STAGES, recordProgress, progressSnapshot, elapsedLabel } from "./paper_progress.mjs?v=7efd96f7e47c3f5a";
+import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=7efd96f7e47c3f5a";
+import { h } from "./dom_builder.mjs?v=7efd96f7e47c3f5a";
+import { paperStore } from "./paper_store.mjs?v=7efd96f7e47c3f5a";
+import { validateCapture, confirmedCapture, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=7efd96f7e47c3f5a";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=7efd96f7e47c3f5a";
+import { PaperModel } from "./paper_model.mjs?v=7efd96f7e47c3f5a";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=7efd96f7e47c3f5a";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=7efd96f7e47c3f5a";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=7efd96f7e47c3f5a";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=7efd96f7e47c3f5a";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=7efd96f7e47c3f5a";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;
@@ -126,7 +126,7 @@ function render() {
       rejected ? h("aside", { className: "qualification-note", attrs: { "aria-label": "Full-text qualification assessment" } },
         h("strong", { textContent: "The AI could not qualify this claim" }),
         h("p", { textContent: "This preview supports person-level observational claims with an explicit or implied causal interpretation, including unadjusted estimates. The AI did not verify that this claim fits that scope in the captured text. This assessment may be incorrect or incomplete; manually check the methods, tables and supplementary material." }),
-        h("details", {}, h("summary", { textContent: "Why the AI stopped" }), h("p", { className: "qualification-reason", textContent: assessment.reason })),
+        h("details", {}, h("summary", { textContent: "Why the AI stopped" }), h("p", { className: "qualification-reason", textContent: assessment.reason }), assessment.designEvidenceQuote ? h("blockquote", { textContent: assessment.designEvidenceQuote }) : null),
         h("p", { className: "muted", textContent: "No confounder review was completed for this claim. You can choose a different extracted claim." })) : assessment?.eligible && !assessment.controls.length ? h("aside", { className: "adjustment-note" },
         h("strong", { textContent: "No adjustment identified in the captured text" }),
         h("p", { textContent: "The claim remains eligible for confounder review. This assessment may be incomplete; manually check the focal model and supplementary material." })) : null);
