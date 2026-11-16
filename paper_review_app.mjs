@@ -1,16 +1,16 @@
-import { recoveryState, acknowledgeRetry } from "./paper_review_state.mjs?v=cfedaf48265016d0";
-import { REVIEW_STAGES, recordProgress, progressSnapshot, elapsedLabel } from "./paper_progress.mjs?v=cfedaf48265016d0";
-import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=cfedaf48265016d0";
-import { h } from "./dom_builder.mjs?v=cfedaf48265016d0";
-import { paperStore } from "./paper_store.mjs?v=cfedaf48265016d0";
-import { validateCapture, confirmedCapture, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=cfedaf48265016d0";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=cfedaf48265016d0";
-import { PaperModel } from "./paper_model.mjs?v=cfedaf48265016d0";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=cfedaf48265016d0";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=cfedaf48265016d0";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=cfedaf48265016d0";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=cfedaf48265016d0";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=cfedaf48265016d0";
+import { recoveryState, acknowledgeRetry } from "./paper_review_state.mjs?v=0ec7d6094fafd6eb";
+import { REVIEW_STAGES, recordProgress, progressSnapshot, elapsedLabel } from "./paper_progress.mjs?v=0ec7d6094fafd6eb";
+import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=0ec7d6094fafd6eb";
+import { h } from "./dom_builder.mjs?v=0ec7d6094fafd6eb";
+import { paperStore } from "./paper_store.mjs?v=0ec7d6094fafd6eb";
+import { validateCapture, confirmedCapture, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=0ec7d6094fafd6eb";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=0ec7d6094fafd6eb";
+import { PaperModel } from "./paper_model.mjs?v=0ec7d6094fafd6eb";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=0ec7d6094fafd6eb";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=0ec7d6094fafd6eb";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=0ec7d6094fafd6eb";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=0ec7d6094fafd6eb";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=0ec7d6094fafd6eb";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;
@@ -222,7 +222,7 @@ function model() {
   if (!key) throw new Error("Connect your capped OpenRouter key first.");
   if (run.model !== PAPER_PIPELINE.model) throw new Error("This older review uses a different model. Capture the paper again to start a pipeline review.");
   return new PaperModel({ run, getKey: () => key, save, signal: controller.signal,
-    onProgress: event => { text("progress", typeof event === "string" ? event : event.title); render(); } });
+    onProgress: event => { if (typeof event !== "string") activity(run.progress?.stage || "qualify", event.title, event.detail || ""); else text("progress", event); render(); } });
 }
 async function connectKey(candidate, { restored = false, persistent = false } = {}) {
   await checkCappedKey(candidate, controller?.signal);

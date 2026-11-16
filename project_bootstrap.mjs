@@ -1,11 +1,11 @@
-import { dagDataSource } from "./dag_data_source.mjs?v=cfedaf48265016d0";
-import { schemaPublicationId } from "./dag_data_config.mjs?v=cfedaf48265016d0";
-import { applyPermalink, permalinkInput, TASKS } from "./dag_permalink.mjs?v=cfedaf48265016d0";
-import { createProjectBootstrapPresenter } from "./project_bootstrap_presenter.mjs?v=cfedaf48265016d0";
-import { loadLocalSchema } from "./local_schema_store.mjs?v=cfedaf48265016d0";
-import { incrementCompiledDag } from "./compiled_dag.mjs?v=cfedaf48265016d0";
-import { normalizeLinkDecision } from "./dag_link_aggregation.mjs?v=cfedaf48265016d0";
-import { validateGroupingSchema } from "./data_validation.mjs?v=cfedaf48265016d0";
+import { dagDataSource } from "./dag_data_source.mjs?v=0ec7d6094fafd6eb";
+import { schemaPublicationId } from "./dag_data_config.mjs?v=0ec7d6094fafd6eb";
+import { applyPermalink, permalinkInput, TASKS } from "./dag_permalink.mjs?v=0ec7d6094fafd6eb";
+import { createProjectBootstrapPresenter } from "./project_bootstrap_presenter.mjs?v=0ec7d6094fafd6eb";
+import { loadLocalSchema } from "./local_schema_store.mjs?v=0ec7d6094fafd6eb";
+import { incrementCompiledDag } from "./compiled_dag.mjs?v=0ec7d6094fafd6eb";
+import { normalizeLinkDecision } from "./dag_link_aggregation.mjs?v=0ec7d6094fafd6eb";
+import { validateGroupingSchema } from "./data_validation.mjs?v=0ec7d6094fafd6eb";
 
 export function createProjectBootstrap({ state, initElements, installHandlers, installDefinitionHandlers,
   initializeProject, loadLatestSchemaGroups,

@@ -1,4 +1,4 @@
-import { openRouterJson, cappedKeyStatus } from "./definition_jev_core.mjs?v=cfedaf48265016d0";
+import { openRouterJson, cappedKeyStatus } from "./definition_jev_core.mjs?v=0ec7d6094fafd6eb";
 export function base64Url(bytes) {
   return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }

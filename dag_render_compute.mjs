@@ -1,7 +1,7 @@
 "use strict";
 
-import { computeDagLayout, dagNodeBoxes } from "./dag_layout.mjs?v=cfedaf48265016d0";
-import { routeEdges, studyArrowCorridor } from "./dag_router.mjs?v=cfedaf48265016d0";
+import { computeDagLayout, dagNodeBoxes } from "./dag_layout.mjs?v=0ec7d6094fafd6eb";
+import { routeEdges, studyArrowCorridor } from "./dag_router.mjs?v=0ec7d6094fafd6eb";
 
 function nodeBounds(layout) {
   let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
