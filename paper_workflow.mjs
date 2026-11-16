@@ -1,10 +1,10 @@
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=b4f436b9e8ea95fa";
-import { validateClaims, validateQualification } from "./paper_capture.mjs?v=b4f436b9e8ea95fa";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=b4f436b9e8ea95fa";
-import { createEchoTools } from "./echo_tools.mjs?v=b4f436b9e8ea95fa";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=b4f436b9e8ea95fa";
-import { validateGroupingSchema } from "./data_validation.mjs?v=b4f436b9e8ea95fa";
-import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=b4f436b9e8ea95fa";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=2defc2bf91433492";
+import { validateClaims, validateQualification } from "./paper_capture.mjs?v=2defc2bf91433492";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=2defc2bf91433492";
+import { createEchoTools } from "./echo_tools.mjs?v=2defc2bf91433492";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=2defc2bf91433492";
+import { validateGroupingSchema } from "./data_validation.mjs?v=2defc2bf91433492";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=2defc2bf91433492";
 
 export const claimSchema = object({ claims: array(object({ id: string, text: string, sourceSentences: array(string) })) });
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,
@@ -195,7 +195,7 @@ causes_y_only_via_x must reject EVERY alternate direct or two-link route in the 
     publicationId: session.record.sourcePublication.id, schemaHash: session.record.sourcePublication.content_hash,
     physicalSnapshotId: session.record.snapshotId, evidenceManifestHash: session.record.evidenceManifestHash,
     focalVariableMatches: run.focalVariables, linkReviews: coverage.linkReviews,
-    review, statusLabels: CONFOUNDER_STATUSES, reviewNotice: MANUAL_REVIEW_NOTICE, model: run.model, usage: run.calls,
+    review, statusLabels: CONFOUNDER_STATUSES, reviewNotice: MANUAL_REVIEW_NOTICE, validationNotice: VALIDATION_NOTICE, model: run.model, usage: run.calls,
     limitations: [MANUAL_REVIEW_NOTICE, "AI review does not establish identification or quantify bias.",
       "No previous private finding judgments or private split library were reused.",
       "Missing focal variable occurrences are not manufactured; inspect anchor membership and measurement correspondence.",

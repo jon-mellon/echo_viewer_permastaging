@@ -1,14 +1,14 @@
-import { h } from "./dom_builder.mjs?v=b4f436b9e8ea95fa";
-import { paperStore } from "./paper_store.mjs?v=b4f436b9e8ea95fa";
-import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=b4f436b9e8ea95fa";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=b4f436b9e8ea95fa";
-import { openRouterJson } from "./definition_jev_core.mjs?v=b4f436b9e8ea95fa";
-import { PaperModel, validateShape } from "./paper_model.mjs?v=b4f436b9e8ea95fa";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=b4f436b9e8ea95fa";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=b4f436b9e8ea95fa";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=b4f436b9e8ea95fa";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=b4f436b9e8ea95fa";
-import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=b4f436b9e8ea95fa";
+import { h } from "./dom_builder.mjs?v=2defc2bf91433492";
+import { paperStore } from "./paper_store.mjs?v=2defc2bf91433492";
+import { validateCapture, confirmedCapture, validateClaims } from "./paper_capture.mjs?v=2defc2bf91433492";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=2defc2bf91433492";
+import { openRouterJson } from "./definition_jev_core.mjs?v=2defc2bf91433492";
+import { PaperModel, validateShape } from "./paper_model.mjs?v=2defc2bf91433492";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=2defc2bf91433492";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit, claimSchema } from "./paper_workflow.mjs?v=2defc2bf91433492";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=2defc2bf91433492";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=2defc2bf91433492";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=2defc2bf91433492";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;
@@ -42,6 +42,7 @@ function render() {
   $("result").replaceChildren();
   if (run?.outcome) {
     $("result").append(h("h3", { textContent: "Automated review complete" }),
+      h("p", { className: "notice", textContent: VALIDATION_NOTICE }),
       h("p", { className: "notice", textContent: MANUAL_REVIEW_NOTICE }),
       h("p", { textContent: run.selectedClaim.text }));
     for (const [id, row] of Object.entries(run.outcome.review.confounders)) {
@@ -176,7 +177,7 @@ $("retry").addEventListener("click", () => action(async () => {
 }));
 $("export").addEventListener("click", () => action(async () => {
   if (!run) throw new Error("No private review to export.");
-  const url = URL.createObjectURL(new Blob([JSON.stringify({ ...run, reviewNotice: MANUAL_REVIEW_NOTICE }, null, 2)], { type: "application/json" }));
+  const url = URL.createObjectURL(new Blob([JSON.stringify({ ...run, reviewNotice: MANUAL_REVIEW_NOTICE, validationNotice: VALIDATION_NOTICE }, null, 2)], { type: "application/json" }));
   const link = h("a", { href: url, download: `echo-paper-${run.id}.json` }); link.click(); URL.revokeObjectURL(url);
 }));
 $("preview").addEventListener("click", () => action(async () => {

@@ -1,7 +1,7 @@
-import { openRouterJson } from "./definition_jev_core.mjs?v=b4f436b9e8ea95fa";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=b4f436b9e8ea95fa";
-import { digest } from "./paper_review_contract.mjs?v=b4f436b9e8ea95fa";
-import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=b4f436b9e8ea95fa";
+import { openRouterJson } from "./definition_jev_core.mjs?v=2defc2bf91433492";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=2defc2bf91433492";
+import { digest } from "./paper_review_contract.mjs?v=2defc2bf91433492";
+import { unaddressedAssessmentNotice } from "./paper_review_copy.mjs?v=2defc2bf91433492";
 
 export const object = properties => ({ type: "object", properties, required: Object.keys(properties), additionalProperties: false });
 export const string = { type: "string" }, boolean = { type: "boolean" };
@@ -28,6 +28,7 @@ Never invent source quotations, findings, IDs, measurements or independent paper
 Never publish. Explain limits of observational inference; an omitted-control diagnosis does not quantify bias or refute a result.
 When evaluating potential omissions, describe confounders or findings as "may be unaddressed", explain uncertainty, and identify what the user must manually verify in the paper and evidence. Do not present an automated assessment as an established error by the authors. Preserve exact source quotations unchanged.
 Attribute the assessment explicitly to "The AI", not "we" or a verified finding about the authors. For example: "${unaddressedAssessmentNotice("age")}" Substitute the actual confounder and explain the evidence-specific limitations; do not claim to have checked material outside the captured text.
+Echo's validation is incomplete. Do not claim a measured accuracy or error rate for Echo.
 When substantive evidence is missing, return unavailable fields and a reason; do not fill gaps by guessing.`;
 
 export class PaperModel {
