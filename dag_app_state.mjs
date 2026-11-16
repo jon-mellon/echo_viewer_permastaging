@@ -1,6 +1,6 @@
 // @ts-check
 
-/** @typedef {import("./app_contracts.mjs?v=7efd96f7e47c3f5a").DagAppState} DagAppState */
+/** @typedef {import("./app_contracts.mjs?v=cfedaf48265016d0").DagAppState} DagAppState */
 
 // There is no unfiltered diagram: when no diagnostic view is on, the confounders view is. Every rebuild path normalizes
 // through this, so the heading, toolbar and graph always describe the same view.

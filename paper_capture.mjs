@@ -1,5 +1,5 @@
-import { PERSON_UOA_VALUES } from "./dag_uoa.mjs?v=7efd96f7e47c3f5a";
-import { digest } from "./paper_review_contract.mjs?v=7efd96f7e47c3f5a";
+import { PERSON_UOA_VALUES } from "./dag_uoa.mjs?v=cfedaf48265016d0";
+import { digest } from "./paper_review_contract.mjs?v=cfedaf48265016d0";
 export function validateCapture(input) {
   if (!input || typeof input !== "object") throw new Error("A paper capture is required.");
   const result = {};
