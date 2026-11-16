@@ -1,4 +1,4 @@
-import { customVariableContext, deleteSplitCategories } from "./dag_project.mjs?v=926dcddfc5a2f044";
+import { customVariableContext, deleteSplitCategories } from "./dag_project.mjs?v=670de8bf5a9d6ff7";
 
 /** A preview only: the live schema is changed when the replacement is saved. */
 export function projectWithoutRoleSplit(project, role, expectedGroupId = null) {

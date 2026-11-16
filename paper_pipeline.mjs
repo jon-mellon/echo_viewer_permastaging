@@ -1,6 +1,6 @@
-import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=926dcddfc5a2f044";
-import { validateShape, SAFETY } from "./paper_model.mjs?v=926dcddfc5a2f044";
-import { PERSON_UOA_VALUES } from "./dag_uoa.mjs?v=926dcddfc5a2f044";
+import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=670de8bf5a9d6ff7";
+import { validateShape, SAFETY } from "./paper_model.mjs?v=670de8bf5a9d6ff7";
+import { PERSON_UOA_VALUES } from "./dag_uoa.mjs?v=670de8bf5a9d6ff7";
 
 export function pipelineClaims(extraction) {
   validateShape(extraction, PAPER_PIPELINE.extractionSchema);

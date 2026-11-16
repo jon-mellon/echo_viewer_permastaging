@@ -1,12 +1,12 @@
-import { reportProgress } from "./paper_progress.mjs?v=926dcddfc5a2f044";
-import { extractPipelineClaims } from "./paper_pipeline.mjs?v=926dcddfc5a2f044";
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=926dcddfc5a2f044";
-import { validateQualification, validateQualificationResult, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=926dcddfc5a2f044";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=926dcddfc5a2f044";
-import { createEchoTools } from "./echo_tools.mjs?v=926dcddfc5a2f044";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=926dcddfc5a2f044";
-import { validateGroupingSchema } from "./data_validation.mjs?v=926dcddfc5a2f044";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=926dcddfc5a2f044";
+import { reportProgress } from "./paper_progress.mjs?v=670de8bf5a9d6ff7";
+import { extractPipelineClaims } from "./paper_pipeline.mjs?v=670de8bf5a9d6ff7";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=670de8bf5a9d6ff7";
+import { validateQualification, validateQualificationResult, NO_ADJUSTMENT_IDENTIFIED_NOTICE } from "./paper_capture.mjs?v=670de8bf5a9d6ff7";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=670de8bf5a9d6ff7";
+import { createEchoTools } from "./echo_tools.mjs?v=670de8bf5a9d6ff7";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=670de8bf5a9d6ff7";
+import { validateGroupingSchema } from "./data_validation.mjs?v=670de8bf5a9d6ff7";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=670de8bf5a9d6ff7";
 
 export const qualificationSchema = object({ eligible: { ...boolean, description: "Within scope for confounder scrutiny, not an endorsement of causal identification. Unadjusted, potentially confounded observational causal claims are eligible." }, reason: string,
   causal: { ...boolean, description: "The authors explicitly or implicitly interpret the selected relationship causally. This does not mean the estimate identifies a causal effect; no adjustment is required." },

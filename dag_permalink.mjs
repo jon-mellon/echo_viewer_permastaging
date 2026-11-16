@@ -1,4 +1,4 @@
-import { MAX_NEIGHBORHOOD_DEPTH } from "./causal_neighborhood.mjs?v=926dcddfc5a2f044";
+import { MAX_NEIGHBORHOOD_DEPTH } from "./causal_neighborhood.mjs?v=670de8bf5a9d6ff7";
 
 export const PERMALINK_VERSION = "1";
 export const TASKS = ["identify", "causes", "consequences"];
