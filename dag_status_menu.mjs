@@ -1,4 +1,4 @@
-import { h } from "./dom_builder.mjs?v=7d2a7a7bfef3ce73";
+import { h } from "./dom_builder.mjs?v=aa4071294b6eec8d";
 
 /**
  * A right-click menu on the graph for setting a variable's status. One menu is reused; it closes on a choice,

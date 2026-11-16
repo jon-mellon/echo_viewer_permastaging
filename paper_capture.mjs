@@ -1,4 +1,4 @@
-import { digest } from "./paper_review_contract.mjs?v=7d2a7a7bfef3ce73";
+import { digest } from "./paper_review_contract.mjs?v=aa4071294b6eec8d";
 export function validateCapture(input) {
   if (!input || typeof input !== "object") throw new Error("A paper capture is required.");
   const result = {};

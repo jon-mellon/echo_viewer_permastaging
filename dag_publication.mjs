@@ -1,7 +1,7 @@
-import { publicationPermalink } from "/echo_viewer_permastaging/published_schema_loader.mjs?v=7d2a7a7bfef3ce73";
-import { canonicalizeWorkingSchema, publishWorkingSchema, formatPublicationError, workingSchemaHashes } from "./dag_publication_core.mjs?v=7d2a7a7bfef3ce73";
-import { confirmPublicPublication } from "./publication_consent.mjs?v=7d2a7a7bfef3ce73";
-export { CANONICAL_BASELINE_ID, CANONICAL_BASELINE_HASH, canonicalizeWorkingSchema, publishWorkingSchema, formatPublicationError } from "./dag_publication_core.mjs?v=7d2a7a7bfef3ce73";
+import { publicationPermalink } from "/echo_viewer_permastaging/published_schema_loader.mjs?v=aa4071294b6eec8d";
+import { canonicalizeWorkingSchema, publishWorkingSchema, formatPublicationError, workingSchemaHashes } from "./dag_publication_core.mjs?v=aa4071294b6eec8d";
+import { confirmPublicPublication } from "./publication_consent.mjs?v=aa4071294b6eec8d";
+export { CANONICAL_BASELINE_ID, CANONICAL_BASELINE_HASH, canonicalizeWorkingSchema, publishWorkingSchema, formatPublicationError } from "./dag_publication_core.mjs?v=aa4071294b6eec8d";
 
 function showStatus(element, message, isError = false) {
   element.textContent = message;

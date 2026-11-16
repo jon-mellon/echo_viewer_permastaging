@@ -1,5 +1,5 @@
-import { createOpenRouterAuthorization, exchangeOpenRouterCode } from "./openrouter_connection.mjs?v=7d2a7a7bfef3ce73";
-import { paperReviewAllowed } from "./paper_review_access.mjs?v=7d2a7a7bfef3ce73";
+import { createOpenRouterAuthorization, exchangeOpenRouterCode } from "./openrouter_connection.mjs?v=aa4071294b6eec8d";
+import { paperReviewAllowed } from "./paper_review_access.mjs?v=aa4071294b6eec8d";
 const status = document.getElementById("status");
 const storageKey = "echo-paper-pkce-v1";
 async function connect() {
