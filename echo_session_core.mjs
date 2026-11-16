@@ -1,19 +1,19 @@
-import * as projectOps from "./dag_project.mjs?v=2defc2bf91433492";
-import * as visibility from "./variable_visibility.mjs?v=2defc2bf91433492";
-import { CONFOUNDER_STATUSES, EXCLUSION_STATUSES, confounderKey, diagnosticKey, scopedDecisions } from "./confounder_status.mjs?v=2defc2bf91433492";
-import { checkAdjustmentClaim, checkOnlyViaClaim } from "./causal_neighborhood.mjs?v=2defc2bf91433492";
-import { fullCompileDag } from "./compiled_dag.mjs?v=2defc2bf91433492";
-import { deriveDagView } from "./dag_view.mjs?v=2defc2bf91433492";
-import { effectiveStudyGraph } from "./study_graph.mjs?v=2defc2bf91433492";
-import { buildCandidateQueue } from "./dag_candidates.mjs?v=2defc2bf91433492";
-import { groupNeighborSuggestions } from "./dag_search.mjs?v=2defc2bf91433492";
-import { validateGroupingSchema } from "./data_validation.mjs?v=2defc2bf91433492";
-import { canonicalizeWorkingSchema, publishWorkingSchema } from "./dag_publication_core.mjs?v=2defc2bf91433492";
-import { publicationPermalink } from "./published_schema_loader.mjs?v=2defc2bf91433492";
-import { browsePublishedSplits, loadPublishedSplitMembership } from "./published_split_browser.mjs?v=2defc2bf91433492";
+import * as projectOps from "./dag_project.mjs?v=4d2c68b3bc640cfc";
+import * as visibility from "./variable_visibility.mjs?v=4d2c68b3bc640cfc";
+import { CONFOUNDER_STATUSES, EXCLUSION_STATUSES, confounderKey, diagnosticKey, scopedDecisions } from "./confounder_status.mjs?v=4d2c68b3bc640cfc";
+import { checkAdjustmentClaim, checkOnlyViaClaim } from "./causal_neighborhood.mjs?v=4d2c68b3bc640cfc";
+import { fullCompileDag } from "./compiled_dag.mjs?v=4d2c68b3bc640cfc";
+import { deriveDagView } from "./dag_view.mjs?v=4d2c68b3bc640cfc";
+import { effectiveStudyGraph } from "./study_graph.mjs?v=4d2c68b3bc640cfc";
+import { buildCandidateQueue } from "./dag_candidates.mjs?v=4d2c68b3bc640cfc";
+import { groupNeighborSuggestions } from "./dag_search.mjs?v=4d2c68b3bc640cfc";
+import { validateGroupingSchema } from "./data_validation.mjs?v=4d2c68b3bc640cfc";
+import { canonicalizeWorkingSchema, publishWorkingSchema } from "./dag_publication_core.mjs?v=4d2c68b3bc640cfc";
+import { publicationPermalink } from "./published_schema_loader.mjs?v=4d2c68b3bc640cfc";
+import { browsePublishedSplits, loadPublishedSplitMembership } from "./published_split_browser.mjs?v=4d2c68b3bc640cfc";
 import { JEV_BATCH_SIZE, JEV_TEST_SIZE, cappedKeyStatus, randomSampleIds,
   jevRecords, jevRequest, jevResults, openRouterJson, parseJevPricing,
-  jevRequestSizes, estimatedJevCharge } from "./definition_jev_core.mjs?v=2defc2bf91433492";
+  jevRequestSizes, estimatedJevCharge } from "./definition_jev_core.mjs?v=4d2c68b3bc640cfc";
 
 function jsonSafe(value) {
   return JSON.parse(JSON.stringify(value, (_, item) => item instanceof Set ? [...item] : item instanceof Map ? Object.fromEntries(item) : item));

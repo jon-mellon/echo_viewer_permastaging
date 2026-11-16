@@ -1,10 +1,10 @@
-import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=2defc2bf91433492";
-import { validateClaims, validateQualification } from "./paper_capture.mjs?v=2defc2bf91433492";
-import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=2defc2bf91433492";
-import { createEchoTools } from "./echo_tools.mjs?v=2defc2bf91433492";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=2defc2bf91433492";
-import { validateGroupingSchema } from "./data_validation.mjs?v=2defc2bf91433492";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=2defc2bf91433492";
+import { object, array, string, boolean, validateShape } from "./paper_model.mjs?v=4d2c68b3bc640cfc";
+import { validateClaims, validateQualification } from "./paper_capture.mjs?v=4d2c68b3bc640cfc";
+import { digest, materializeQueue, reviewCoverage, validateFindingDecision, requiredIds } from "./paper_review_contract.mjs?v=4d2c68b3bc640cfc";
+import { createEchoTools } from "./echo_tools.mjs?v=4d2c68b3bc640cfc";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=4d2c68b3bc640cfc";
+import { validateGroupingSchema } from "./data_validation.mjs?v=4d2c68b3bc640cfc";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=4d2c68b3bc640cfc";
 
 export const claimSchema = object({ claims: array(object({ id: string, text: string, sourceSentences: array(string) })) });
 export const qualificationSchema = object({ eligible: boolean, reason: string, causal: boolean,
