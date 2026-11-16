@@ -1,14 +1,14 @@
-import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=aa4071294b6eec8d";
-import { h } from "./dom_builder.mjs?v=aa4071294b6eec8d";
-import { paperStore } from "./paper_store.mjs?v=aa4071294b6eec8d";
-import { validateCapture, confirmedCapture } from "./paper_capture.mjs?v=aa4071294b6eec8d";
-import { checkCappedKey } from "./openrouter_connection.mjs?v=aa4071294b6eec8d";
-import { PaperModel } from "./paper_model.mjs?v=aa4071294b6eec8d";
-import { BrowserEchoSession } from "./paper_browser_session.mjs?v=aa4071294b6eec8d";
-import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=aa4071294b6eec8d";
-import { publicSchemaProjection } from "./public_schema_projection.mjs?v=aa4071294b6eec8d";
-import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=aa4071294b6eec8d";
-import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=aa4071294b6eec8d";
+import { PAPER_PIPELINE } from "./paper_pipeline_contract.mjs?v=a2c20939df36fd83";
+import { h } from "./dom_builder.mjs?v=a2c20939df36fd83";
+import { paperStore } from "./paper_store.mjs?v=a2c20939df36fd83";
+import { validateCapture, confirmedCapture } from "./paper_capture.mjs?v=a2c20939df36fd83";
+import { checkCappedKey } from "./openrouter_connection.mjs?v=a2c20939df36fd83";
+import { PaperModel } from "./paper_model.mjs?v=a2c20939df36fd83";
+import { BrowserEchoSession } from "./paper_browser_session.mjs?v=a2c20939df36fd83";
+import { extractClaims, qualifyClaim, evaluatePaper, resolveSplit } from "./paper_workflow.mjs?v=a2c20939df36fd83";
+import { publicSchemaProjection } from "./public_schema_projection.mjs?v=a2c20939df36fd83";
+import { CONFOUNDER_STATUSES, MANUAL_REVIEW_NOTICE } from "./confounder_status.mjs?v=a2c20939df36fd83";
+import { unaddressedAssessmentNotice, VALIDATION_NOTICE } from "./paper_review_copy.mjs?v=a2c20939df36fd83";
 
 const $ = id => document.getElementById(id);
 let run = null, session = null, key = null, busy = false, controller = null, authWindow = null, authNonce = null;
